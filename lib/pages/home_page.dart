@@ -1,4 +1,5 @@
 import 'package:alemeno_food_game/pages/click_picture_page.dart';
+import 'package:alemeno_food_game/pages/shared_meal_page.dart';
 import 'package:alemeno_food_game/pallete.dart';
 import 'package:flutter/material.dart';
 
@@ -16,11 +17,11 @@ class HomePage extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
             Container(
-              margin: const EdgeInsets.only(bottom: 150),
+              margin: const EdgeInsets.only(bottom: 50),
               child: ElevatedButton(
                 style: ButtonStyle(
                   padding: MaterialStatePropertyAll(
-                    const EdgeInsets.symmetric(horizontal: 20, vertical: 8)
+                    const EdgeInsets.symmetric(horizontal: 38, vertical: 8)
                         .copyWith(bottom: 12),
                   ),
                   backgroundColor:
@@ -41,6 +42,38 @@ class HomePage extends StatelessWidget {
                     MaterialPageRoute(
                       builder: (context) {
                         return ClickPicturePage();
+                      },
+                    ),
+                  );
+                },
+              ),
+            ),
+            Container(
+              margin: const EdgeInsets.only(bottom: 150),
+              child: ElevatedButton(
+                style: ButtonStyle(
+                  padding: MaterialStatePropertyAll(
+                    const EdgeInsets.symmetric(horizontal: 20, vertical: 8)
+                        .copyWith(bottom: 12),
+                  ),
+                  backgroundColor:
+                      const MaterialStatePropertyAll(Pallete.greenColor),
+                  shape: const MaterialStatePropertyAll(RoundedRectangleBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(50)))),
+                ),
+                child: const Text(
+                  "Meal you've shared",
+                  style: TextStyle(
+                    fontSize: 25,
+                    fontFamily: "Andika",
+                  ),
+                ),
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) {
+                        return SharedMealPage();
                       },
                     ),
                   );

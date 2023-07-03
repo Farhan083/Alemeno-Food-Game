@@ -44,4 +44,25 @@ class FirebaseService {
       print('Error uploading image: $e');
     }
   }
+
+  // to get user images
+  Future<List<String>> getUserImagesFromFirebaseStorage(String userId) async {
+    final storage = FirebaseStorage.instance;
+    final listRef = storage.ref().child('users/$userId');
+
+    try {
+      final result = await listRef.listAll();
+      final imageUrls = <String>[];
+
+      for (final ref in result.items) {
+        final url = await ref.getDownloadURL();
+        imageUrls.add(url);
+      }
+
+      return imageUrls;
+    } catch (e) {
+      print('Error fetching user images: $e');
+      return [];
+    }
+  }
 }
