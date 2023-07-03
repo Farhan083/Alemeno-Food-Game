@@ -18,6 +18,11 @@ void main() async {
           ledColor: Colors.white)
     ],
   );
+  AwesomeNotifications().isNotificationAllowed().then((isAllowed) {
+    if (!isAllowed) {
+      AwesomeNotifications().requestPermissionToSendNotifications();
+    }
+  });
   await Firebase.initializeApp();
   runApp(const MyApp());
 }

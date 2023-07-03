@@ -132,6 +132,17 @@ class _ClickPicturePageState extends State<ClickPicturePage> {
   @override
   Widget build(BuildContext context) {
     // Widget cameraPreview = CameraPreview(cameraController);
+    if (isError && !isInitialized) {
+      return Scaffold(
+        body: SizedBox(
+          width: double.infinity,
+          child: Center(
+            child: Text(errorMessage),
+          ),
+        ),
+      );
+    }
+
     if (!isInitialized) {
       return const Center(
         child: CircularProgressIndicator(),

@@ -38,13 +38,20 @@ class _SharePictureScreenState extends State<SharePictureScreen> {
     await imageRecognitionService.loadModel();
     await imageRecognitionService.classifyImage(widget.imageFile);
     outputs = imageRecognitionService.outputs;
+
     recLabel = outputs![0]['label'];
     recLabel = recLabel.replaceAll(RegExp(r'[0-9]'), '');
+    print(outputs);
+    print(recLabel);
     print(recLabel.length);
     if (recLabel == " food") {
-      isFood = true;
+      setState(() {
+        isFood = true;
+      });
     } else {
-      isFood = false;
+      setState(() {
+        isFood = false;
+      });
     }
     print(isFood);
   }
@@ -171,46 +178,47 @@ class _SharePictureScreenState extends State<SharePictureScreen> {
                               const SizedBox(
                                 height: 30,
                               ),
-                              SizedBox(
-                                width: 80,
-                                height: 80,
-                                child: FloatingActionButton(
-                                  backgroundColor: Pallete.greenColor,
-                                  onPressed: () {
-                                    setState(() {
-                                      isLoading = true;
-                                    });
-                                    firebaseService
-                                        .uploadImageToFirebaseStorage(
-                                            widget.imageFile)
-                                        .then((value) =>
-                                            moveToMsgScreen(context));
-                                  },
-                                  child: const Icon(
-                                    Icons.check,
-                                    size: 45,
-                                  ),
-                                ),
-                              )
-                              // : SizedBox(
-                              //     width: 80,
-                              //     height: 80,
-                              //     child: FloatingActionButton(
-                              //       backgroundColor: Pallete.greenColor,
-                              //       onPressed: () {
-                              //         Navigator.pushReplacement(context,
-                              //             MaterialPageRoute(
-                              //           builder: (context) {
-                              //             return const ClickPicturePage();
-                              //           },
-                              //         ));
-                              //       },
-                              //       child: const Icon(
-                              //         Icons.camera_alt,
-                              //         size: 45,
-                              //       ),
-                              //     ),
-                              //   ),
+                              isFood
+                                  ? SizedBox(
+                                      width: 80,
+                                      height: 80,
+                                      child: FloatingActionButton(
+                                        backgroundColor: Pallete.greenColor,
+                                        onPressed: () {
+                                          setState(() {
+                                            isLoading = true;
+                                          });
+                                          firebaseService
+                                              .uploadImageToFirebaseStorage(
+                                                  widget.imageFile)
+                                              .then((value) =>
+                                                  moveToMsgScreen(context));
+                                        },
+                                        child: const Icon(
+                                          Icons.check,
+                                          size: 45,
+                                        ),
+                                      ),
+                                    )
+                                  : SizedBox(
+                                      width: 80,
+                                      height: 80,
+                                      child: FloatingActionButton(
+                                        backgroundColor: Pallete.greenColor,
+                                        onPressed: () {
+                                          Navigator.pushReplacement(context,
+                                              MaterialPageRoute(
+                                            builder: (context) {
+                                              return const ClickPicturePage();
+                                            },
+                                          ));
+                                        },
+                                        child: const Icon(
+                                          Icons.camera_alt,
+                                          size: 45,
+                                        ),
+                                      ),
+                                    ),
                             ],
                           ),
                         ),
