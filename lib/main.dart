@@ -1,7 +1,8 @@
 import 'package:alemeno_food_game/pages/home_page.dart';
+import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 
-void main() {
+void main() async {
   runApp(const MyApp());
 }
 

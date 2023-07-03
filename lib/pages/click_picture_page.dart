@@ -1,9 +1,11 @@
 import 'dart:io';
 
+import 'package:alemeno_food_game/pages/share_picture.dart';
 import 'package:alemeno_food_game/pallete.dart';
 import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
 import 'package:path_provider/path_provider.dart';
+import 'dart:async';
 
 class ClickPicturePage extends StatefulWidget {
   const ClickPicturePage({super.key});
@@ -13,13 +15,16 @@ class ClickPicturePage extends StatefulWidget {
 }
 
 class _ClickPicturePageState extends State<ClickPicturePage> {
-  late CameraController _cameraController;
-  late List<CameraDescription> _cameras;
-  // late String _imagePath;
-  File? _imagePath;
+  late CameraController cameraController;
+  late List<CameraDescription> cameras;
+  // late String imagePath;
+  File? imagePath;
   bool isInitialized = false;
   bool isError = false;
   String errorMessage = '';
+  String savedImagePath = '';
+  bool isLoading = false;
+  bool isAvailable = false;
 
   @override
   void initState() {
@@ -29,17 +34,17 @@ class _ClickPicturePageState extends State<ClickPicturePage> {
   }
 
   Future<void> initializeCamera() async {
-    _cameras = await availableCameras();
-    _cameraController = CameraController(
-      _cameras[0], // You can choose a specific camera here (front/rear)
+    cameras = await availableCameras();
+    cameraController = CameraController(
+      cameras[0], // You can choose a specific camera here (front/rear)
       ResolutionPreset.high,
       imageFormatGroup: ImageFormatGroup.yuv420,
     );
-    // await _cameraController.initialize();
+    // await cameraController.initialize();
     // setState(() {
     //   isInitialized = true;
     // });
-    _cameraController.initialize().then((_) {
+    cameraController.initialize().then((_) {
       if (!mounted) {
         return;
       }
@@ -74,39 +79,59 @@ class _ClickPicturePageState extends State<ClickPicturePage> {
   }
 
   Future<void> takePicture() async {
-    if (!_cameraController.value.isInitialized) {
+    if (!cameraController.value.isInitialized) {
+      return;
+    }
+    print('outside try catch');
+    print('outside try catch');
+    print('outside try catch');
+    // try {
+    final XFile imageFile = await cameraController.takePicture();
+    print('before directory');
+    final directory = await getApplicationDocumentsDirectory();
+    final fileName = 'my_image.jpg';
+    savedImagePath = '${directory.path}/$fileName';
+    print('inside takepicture');
+    print(savedImagePath);
+
+    await File(imageFile.path).copy(savedImagePath);
+
+    setState(() {
+      imagePath = File(imageFile.path);
+      isAvailable = true;
+    });
+    print(imageFile.path);
+    print("hello");
+    // } catch (e) {
+    //   print('Error capturing image: $e');
+    // }
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    final CameraController? cameraControllerr = cameraController;
+
+    // App state changed before we got the chance to initialize.
+    if (cameraControllerr == null || !cameraControllerr.value.isInitialized) {
       return;
     }
 
-    try {
-      final XFile imageFile = await _cameraController.takePicture();
-
-      final directory = await getApplicationDocumentsDirectory();
-      final fileName = 'my_image.jpg';
-      final savedImagePath = '${directory.path}/$fileName';
-      print("hellooo");
-
-      await File(imageFile.path).copy(savedImagePath);
-
-      setState(() {
-        _imagePath = File(imageFile.path);
-      });
-      print('Image File Location: ${imageFile.path}');
-      print('Image File : $imageFile');
-    } catch (e) {
-      print('Error capturing image: $e');
+    if (state == AppLifecycleState.inactive) {
+      cameraControllerr.dispose();
+    } else if (state == AppLifecycleState.resumed) {
+      initializeCamera();
     }
   }
 
   @override
   void dispose() {
-    _cameraController.dispose();
+    cameraController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    // Widget cameraPreview = CameraPreview(_cameraController);
+    // Widget cameraPreview = CameraPreview(cameraController);
     if (!isInitialized) {
       return const Center(
         child: CircularProgressIndicator(),
@@ -201,7 +226,7 @@ class _ClickPicturePageState extends State<ClickPicturePage> {
                                     radius: 100,
                                   ),
                                 )
-                              else if (_imagePath ==
+                              else if (imagePath ==
                                   null) // Display the camera preview
                                 Positioned(
                                   top: -15,
@@ -212,7 +237,7 @@ class _ClickPicturePageState extends State<ClickPicturePage> {
                                       width: 200,
                                       child: AspectRatio(
                                         aspectRatio: 1,
-                                        child: CameraPreview(_cameraController),
+                                        child: CameraPreview(cameraController),
                                       ),
                                     ),
                                   ),
@@ -228,7 +253,7 @@ class _ClickPicturePageState extends State<ClickPicturePage> {
                                       child: AspectRatio(
                                         aspectRatio: 1,
                                         child: Image.file(
-                                          _imagePath!,
+                                          File(savedImagePath),
                                           fit: BoxFit.cover,
                                         ),
                                       ),
@@ -254,7 +279,13 @@ class _ClickPicturePageState extends State<ClickPicturePage> {
                           child: FloatingActionButton(
                             backgroundColor: Pallete.greenColor,
                             onPressed: () {
-                              takePicture();
+                              // await takePicture();
+                              // if (isAvailable)
+                              //   navigateToNextScreen(context);
+                              // else {
+                              //   print('not completed');
+                              // }
+                              takePicandNavigate(context);
                             },
                             child: const Icon(
                               Icons.camera_alt_sharp,
@@ -272,5 +303,33 @@ class _ClickPicturePageState extends State<ClickPicturePage> {
         ),
       ),
     );
+  }
+
+  // void navigateToNextScreen(BuildContext context) async {
+  //   Navigator.push(
+  //     context,
+  //     MaterialPageRoute(
+  //         builder: (context) => SharePictureScreen(imageFile: imagePath!)),
+  //   );
+  // }
+
+  void takePicandNavigate(BuildContext context) async {
+    await takePicture();
+    print('wait completed');
+    navigateToNextScreen(context);
+  }
+
+  void navigateToNextScreen(BuildContext context) {
+    if (imagePath != null) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => SharePictureScreen(imageFile: imagePath!),
+        ),
+      );
+    } else {
+      // Handle error when picture is not taken
+      print('Picture not taken');
+    }
   }
 }
