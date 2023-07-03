@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:alemeno_food_game/services/helper_function.dart';
+import 'package:alemeno_food_game/services/notification_service.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:path/path.dart' as path;
 import 'package:image/image.dart' as img;
@@ -40,6 +41,9 @@ class FirebaseService {
       await ref.putFile(File(tempPath));
       final String imageUrl = await ref.getDownloadURL();
       print('Image uploaded successfully. URL: $imageUrl');
+      // Show a notification
+      NotificationService().showNotification(
+          'Image Upload', 'Thank you for sharing food with me');
     } catch (e) {
       print('Error uploading image: $e');
     }

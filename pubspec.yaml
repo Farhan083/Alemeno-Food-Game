@@ -77,6 +77,10 @@ flutter:
       fonts:
         - asset: assets/fonts/Andika-Regular.ttf
         - asset: assets/fonts/Andika-Bold.ttf
+
+    - family: Lilita
+      fonts:
+        - asset: assets/fonts/LilitaOne-Regular.ttf
   #         style: italic
   #   - family: Trajan Pro
   #     fonts:
