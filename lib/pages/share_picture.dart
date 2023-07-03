@@ -1,6 +1,8 @@
 import 'dart:io';
 
+import 'package:alemeno_food_game/pages/click_picture_page.dart';
 import 'package:alemeno_food_game/pallete.dart';
+import 'package:alemeno_food_game/services/image_recognition_service.dart';
 import 'package:flutter/material.dart';
 
 class SharePictureScreen extends StatefulWidget {
@@ -15,6 +17,34 @@ class SharePictureScreen extends StatefulWidget {
 }
 
 class _SharePictureScreenState extends State<SharePictureScreen> {
+  ImageRecognitionService imageRecognitionService = ImageRecognitionService();
+  List? outputs;
+  String recLabel = '';
+  bool isFood = false;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+
+    imageRecog();
+  }
+
+  imageRecog() async {
+    await imageRecognitionService.loadModel();
+    await imageRecognitionService.classifyImage(widget.imageFile);
+    outputs = imageRecognitionService.outputs;
+    recLabel = outputs![0]['label'];
+    recLabel = recLabel.replaceAll(RegExp(r'[0-9]'), '');
+    print(recLabel.length);
+    if (recLabel == " food") {
+      isFood = true;
+    } else {
+      isFood = false;
+    }
+    print(isFood);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -93,20 +123,6 @@ class _SharePictureScreenState extends State<SharePictureScreen> {
                                   'assets/images/cutleryImg.png',
                                 ),
                               ),
-                              // !cameraController.value.isInitialized ?
-
-                              // Visibility(
-                              //   visible: true,
-                              //   child: Positioned(
-                              //     left: 50,
-                              //     top: -25,
-                              //     child: Image.asset(
-                              //       'assets/images/corners.png',
-                              //       width: 240,
-                              //     ),
-                              //   ),
-                              // ),
-
                               Positioned(
                                 top: -15,
                                 left: 70,
@@ -130,25 +146,54 @@ class _SharePictureScreenState extends State<SharePictureScreen> {
                         const SizedBox(
                           height: 50,
                         ),
-                        const Text(
-                          'Will you eat this?',
-                          style: TextStyle(fontSize: 24, fontFamily: 'Andika'),
-                        ),
+                        isFood
+                            ? const Text(
+                                'Will you eat this?',
+                                style: TextStyle(
+                                    fontSize: 24, fontFamily: 'Andika'),
+                              )
+                            : const Text(
+                                'This is not a food. Click Again!',
+                                style: TextStyle(
+                                    fontSize: 24,
+                                    fontFamily: 'Andika',
+                                    color: Colors.red),
+                              ),
                         const SizedBox(
                           height: 30,
                         ),
-                        SizedBox(
-                          width: 80,
-                          height: 80,
-                          child: FloatingActionButton(
-                            backgroundColor: Pallete.greenColor,
-                            onPressed: () {},
-                            child: const Icon(
-                              Icons.check,
-                              size: 45,
-                            ),
-                          ),
-                        ),
+                        isFood
+                            ? SizedBox(
+                                width: 80,
+                                height: 80,
+                                child: FloatingActionButton(
+                                  backgroundColor: Pallete.greenColor,
+                                  onPressed: () {},
+                                  child: const Icon(
+                                    Icons.check,
+                                    size: 45,
+                                  ),
+                                ),
+                              )
+                            : SizedBox(
+                                width: 80,
+                                height: 80,
+                                child: FloatingActionButton(
+                                  backgroundColor: Pallete.greenColor,
+                                  onPressed: () {
+                                    Navigator.pushReplacement(context,
+                                        MaterialPageRoute(
+                                      builder: (context) {
+                                        return const ClickPicturePage();
+                                      },
+                                    ));
+                                  },
+                                  child: const Icon(
+                                    Icons.camera_alt,
+                                    size: 45,
+                                  ),
+                                ),
+                              ),
                       ],
                     ),
                   ),
