@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:alemeno_food_game/pages/click_picture_page.dart';
 import 'package:alemeno_food_game/pallete.dart';
+import 'package:alemeno_food_game/services/firebase_service.dart';
 import 'package:alemeno_food_game/services/image_recognition_service.dart';
 import 'package:flutter/material.dart';
 
@@ -18,6 +19,7 @@ class SharePictureScreen extends StatefulWidget {
 
 class _SharePictureScreenState extends State<SharePictureScreen> {
   ImageRecognitionService imageRecognitionService = ImageRecognitionService();
+  FirebaseService firebaseService = FirebaseService();
   List? outputs;
   String recLabel = '';
   bool isFood = false;
@@ -168,7 +170,11 @@ class _SharePictureScreenState extends State<SharePictureScreen> {
                                 height: 80,
                                 child: FloatingActionButton(
                                   backgroundColor: Pallete.greenColor,
-                                  onPressed: () {},
+                                  onPressed: () {
+                                    firebaseService
+                                        .uploadImageToFirebaseStorage(
+                                            widget.imageFile);
+                                  },
                                   child: const Icon(
                                     Icons.check,
                                     size: 45,

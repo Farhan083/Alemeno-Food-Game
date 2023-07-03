@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "1256579313",
+    "project_id": "alemeno-food-game",
+    "storage_bucket": "alemeno-food-game.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1256579313:android:0f46c75d39c69641bb4950",
+        "android_client_info": {
+          "package_name": "com.farhan.alemeno_food_game.alemeno_food_game"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1256579313-belmgoufiqb2sfa5m72papognt049qjq.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA3sQ-_NZUpkSmfYyrmObTSlcgY8y93OkM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1256579313-belmgoufiqb2sfa5m72papognt049qjq.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
